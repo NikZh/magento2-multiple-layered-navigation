@@ -1,0 +1,28 @@
+{
+  "name": "niks/multiple-layered-navigation",
+  "description": "N/A",
+  "require": {
+    "php": "~5.5.0|~5.6.0|~7.0.0"
+  },
+  "type": "magento2-module",
+  "version": "0.0.1",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "authors": [
+    {
+      "name": "NikZh",
+      "homepage": "https://github.com/NikZh",
+      "role": "Developer"
+    }
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "Niks\\LayeredNavigation\\": ""
+    }
+  }
+}
