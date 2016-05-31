@@ -142,7 +142,7 @@ class Attribute extends CoreAttribute
         $this->getLayer()->prepareProductCollection($collection);
         foreach ($this->getLayer()->getState()->getFilters() as $filterItem) {
             $filter = $filterItem->getFilter();
-            if ($filter->getAttributeModel()->getAttributeCode() == $this->getAttributeModel()->getAttributeCode()) {
+            if ($filter->getRequestVar() != 'cat' && $filter->getAttributeModel()->getAttributeCode() == $this->getAttributeModel()->getAttributeCode()) {
                 continue;
             }
             $filter->applyToCollection($collection);
