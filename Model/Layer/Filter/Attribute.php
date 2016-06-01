@@ -90,7 +90,7 @@ class Attribute extends CoreAttribute
     {
         $paramValue = $this->_getRequest()->getParam($this->_requestVar);
         if (!$paramValue) {
-            return array();
+            return [];
         }
         $requestValue = $this->_getRequest()->getParam($this->_requestVar);
         return explode('_', $requestValue);
@@ -108,7 +108,7 @@ class Attribute extends CoreAttribute
         if (empty($attributeValue)) {
             return $this;
         }
-        $collection->addFieldToFilter($attribute->getAttributeCode(), array('in' => $attributeValue));
+        $collection->addFieldToFilter($attribute->getAttributeCode(), ['in' => $attributeValue]);
     }
 
     /**
