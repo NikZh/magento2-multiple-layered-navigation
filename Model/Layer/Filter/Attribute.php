@@ -138,20 +138,21 @@ class Attribute extends CoreAttribute
             return parent::_getItemsData();
         }
 
-        $collection = $this->getLayer()->getCollectionProvider()->getCollection($this->getLayer()->getCurrentCategory());
-        $this->getLayer()->prepareProductCollection($collection);
-        foreach ($this->getLayer()->getState()->getFilters() as $filterItem) {
-            $filter = $filterItem->getFilter();
-            if ($filter->getRequestVar() != 'cat' && $filter->getAttributeModel()->getAttributeCode() == $this->getAttributeModel()->getAttributeCode()) {
-                continue;
-            }
-            $filter->applyToCollection($collection);
-        }
-        /** @var \Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection $productCollection */
+        /** @var \Niks\LayeredNavigation\Model\ResourceModel\Fulltext\Collection $productCollection */
         $productCollection = $this->getLayer()
             ->getProductCollection();
-        $attribute = $this->getAttributeModel();
 
+        /** @var \Niks\LayeredNavigation\Model\ResourceModel\Fulltext\Collection $collection */
+        $collection = $this->getLayer()->getCollectionProvider()->getCollection($this->getLayer()->getCurrentCategory());
+
+        foreach ($productCollection->getAddedFilters() as $field => $condition) {
+            if ($this->getAttributeModel()->getAttributeCode() == $field) {
+                continue;
+            }
+            $collection->addFieldToFilter($field, $condition);
+        }
+
+        $attribute = $this->getAttributeModel();
         $optionsFacetedData = $collection->getFacetedData($attribute->getAttributeCode());
 
         if ($attribute->getFrontendInput() == 'multiselect') {

@@ -32,4 +32,14 @@
     <type name="Magento\LayeredNavigation\Block\Navigation\FilterRenderer">
         <plugin name="swatches_layered_renderer" type="Niks\LayeredNavigation\Plugin\FilterRenderer" sortOrder="1" />
     </type>
+    <virtualType name="Niks\LayeredNavigation\Model\ResourceModel\Fulltext\CollectionFactory" type="Magento\Catalog\Model\ResourceModel\Product\CollectionFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">Niks\LayeredNavigation\Model\ResourceModel\Fulltext\Collection</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\CatalogSearch\Model\Layer\Category\ItemCollectionProvider">
+        <arguments>
+            <argument name="collectionFactory" xsi:type="object">Niks\LayeredNavigation\Model\ResourceModel\Fulltext\CollectionFactory</argument>
+        </arguments>
+    </type>
 </config>
