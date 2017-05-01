@@ -10,13 +10,13 @@
             </argument>
         </arguments>
     </virtualType>
-    <!--<virtualType name="searchFilterList" type="Magento\Catalog\Model\Layer\FilterList">-->
-        <!--<arguments>-->
-            <!--<argument name="filters" xsi:type="array">-->
-                <!--<item name="attribute" xsi:type="string">Niks\LayeredNavigation\Model\Layer\Filter\Attribute</item>-->
-            <!--</argument>-->
-        <!--</arguments>-->
-    <!--</virtualType>-->
+    <virtualType name="searchFilterList" type="Magento\Catalog\Model\Layer\FilterList">
+        <arguments>
+            <argument name="filters" xsi:type="array">
+                <item name="attribute" xsi:type="string">Niks\LayeredNavigation\Model\CatalogSearch\Layer\Filter\Attribute</item>
+            </argument>
+        </arguments>
+    </virtualType>
     <type name="Magento\Catalog\Model\Layer\Filter\ItemFactory">
         <arguments>
             <argument name="instanceName" xsi:type="string">Niks\LayeredNavigation\Model\Layer\Filter\Item</argument>
@@ -26,9 +26,12 @@
         <arguments>
             <argument name="layersPool" xsi:type="array">
                 <item name="category" xsi:type="string">Niks\LayeredNavigation\Model\Layer\Category</item>
+                <item name="search" xsi:type="string">Niks\LayeredNavigation\Model\Layer\Search</item>
+
             </argument>
         </arguments>
     </type>
+
     <type name="Magento\LayeredNavigation\Block\Navigation\FilterRenderer">
         <plugin name="swatches_layered_renderer" type="Niks\LayeredNavigation\Plugin\FilterRenderer" sortOrder="1" />
     </type>
