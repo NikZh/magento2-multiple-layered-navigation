@@ -1,21 +1,18 @@
 <?php
-namespace Niks\LayeredNavigation\Model\Layer\Filter;
-use Magento\CatalogSearch\Model\Layer\Filter\Attribute as CoreAttribute;
+namespace Niks\LayeredNavigation\Model\CatalogSearch\Layer\Filter;
+use Niks\LayeredNavigation\Model\Layer\Filter\Attribute as CatalogFilter;
+
+use Magento\Search\Model\QueryFactory;
 
 /**
  * Layer attribute filter
  */
-class Attribute extends CoreAttribute
+class Attribute extends CatalogFilter
 {
     /**
-     * @var \Magento\Framework\App\RequestInterface
+     * @var \Magento\Search\Model\QueryFactory
      */
-    protected $_request;
-
-    /**
-     * @var \Magento\Framework\Filter\StripTags
-     */
-    protected $tagFilter;
+    protected $queryFactory;
 
     /**
      * @param \Magento\Catalog\Model\Layer\Filter\ItemFactory $filterItemFactory
@@ -31,7 +28,8 @@ class Attribute extends CoreAttribute
         \Magento\Catalog\Model\Layer $layer,
         \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder $itemDataBuilder,
         \Magento\Framework\Filter\StripTags $tagFilter,
-        array $data = []
+        array $data = [],
+        QueryFactory $queryFactory
     ) {
         parent::__construct(
             $filterItemFactory,
@@ -41,90 +39,8 @@ class Attribute extends CoreAttribute
             $tagFilter,
             $data
         );
-        $this->tagFilter = $tagFilter;
+        $this->queryFactory = $queryFactory;
     }
-
-    /**
-     * @return \Magento\Framework\App\RequestInterface
-     */
-    protected function _getRequest()
-    {
-        return $this->_request;
-    }
-
-    /**
-     * Apply attribute option filter to product collection
-     *
-     * @param \Magento\Framework\App\RequestInterface $request
-     * @return $this
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
-    public function apply(\Magento\Framework\App\RequestInterface $request)
-    {
-        $this->_request = $request;
-        if (empty($request->getParam($this->_requestVar))) {
-            return $this;
-        }
-
-        /** @var \Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection $productCollection */
-        $productCollection = $this->getLayer()
-            ->getProductCollection();
-        $this->applyToCollection($productCollection);
-
-        $attributeValues = $this->getValueAsArray();
-        foreach ($attributeValues as $value) {
-            $label = $this->getOptionText($value);
-            $this->getLayer()
-                ->getState()
-                ->addFilter($this->_createItem($label, $value));
-        }
-        return $this;
-    }
-
-    /**
-     * Get filter values
-     *
-     * @return array
-     */
-    public function getValueAsArray()
-    {
-        $paramValue = $this->_getRequest()->getParam($this->_requestVar);
-        if (!$paramValue) {
-            return array();
-        }
-        $requestValue = $this->_getRequest()->getParam($this->_requestVar);
-        return explode('_', $requestValue);
-    }
-
-    /**
-     * Apply current filter to collection
-     *
-     * @return Attribute
-     */
-    public function applyToCollection($collection)
-    {
-        $attribute = $this->getAttributeModel();
-        $attributeValue = $this->getValueAsArray();
-        if (empty($attributeValue)) {
-            return $this;
-        }
-        $collection->addFieldToFilter($attribute->getAttributeCode(), array('in' => $attributeValue));
-    }
-
-    /**
-     * Get filter value for reset current filter state
-     *
-     * @param string $value
-     * @return string
-     */
-    public function getResetOptionValue($value)
-    {
-        $attributeValues = $this->getValueAsArray();
-        $key = array_search($value, $attributeValues);
-        unset($attributeValues[$key]);
-        return implode('_', $attributeValues);
-    }
-
 
     /**
      * Get data array for building attribute filter items
@@ -134,16 +50,22 @@ class Attribute extends CoreAttribute
      */
     protected function _getItemsData()
     {
+
         if (!$this->_getRequest()->getParam($this->_requestVar)) {
             return parent::_getItemsData();
         }
 
-        /** @var \Niks\LayeredNavigation\Model\ResourceModel\Fulltext\Collection $productCollection */
+        /** @var \Sizzix\MultipleLayeredNavigation\Model\CatalogSearch\ResourceModel\FullText\Collection $productCollection */
         $productCollection = $this->getLayer()
             ->getProductCollection();
 
-        /** @var \Niks\LayeredNavigation\Model\ResourceModel\Fulltext\Collection $collection */
+        /** @var \Sizzix\MultipleLayeredNavigation\Model\CatalogSearch\ResourceModel\FullText\Collection $collection */
         $collection = $this->getLayer()->getCollectionProvider()->getCollection($this->getLayer()->getCurrentCategory());
+
+        $query = $this->queryFactory->get();
+        if (!$query->isQueryTextShort()) {
+            $collection->addSearchFilter($query->getQueryText());
+        }
 
         foreach ($productCollection->getAddedFilters() as $field => $condition) {
             if ($this->getAttributeModel()->getAttributeCode() == $field) {
@@ -176,10 +98,15 @@ class Attribute extends CoreAttribute
             if (empty($optionsFacetedData[$option['value']]['count'])) {
                 continue;
             }
+
+            $count = isset($optionsFacetedData[$option['value']]['count'])
+                ? (int)$optionsFacetedData[$option['value']]['count']
+                : 0;
+
             $this->itemDataBuilder->addItemData(
                 $this->tagFilter->filter($option['label']),
                 $option['value'],
-                isset($optionsFacetedData[$option['value']]['count']) ? '+' . $optionsFacetedData[$option['value']]['count'] : 0
+                isset($count) ? '+' . $count : 0
             );
         }
 
