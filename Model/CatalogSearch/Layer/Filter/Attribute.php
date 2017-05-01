@@ -55,11 +55,11 @@ class Attribute extends CatalogFilter
             return parent::_getItemsData();
         }
 
-        /** @var \Sizzix\MultipleLayeredNavigation\Model\CatalogSearch\ResourceModel\FullText\Collection $productCollection */
+        /** @var \Niks\LayeredNavigation\Model\ResourceModel\Fulltext\Collection $productCollection */
         $productCollection = $this->getLayer()
             ->getProductCollection();
 
-        /** @var \Sizzix\MultipleLayeredNavigation\Model\CatalogSearch\ResourceModel\FullText\Collection $collection */
+        /** @var \Niks\LayeredNavigation\Model\ResourceModel\Fulltext\Collection $collection */
         $collection = $this->getLayer()->getCollectionProvider()->getCollection($this->getLayer()->getCurrentCategory());
 
         $query = $this->queryFactory->get();
