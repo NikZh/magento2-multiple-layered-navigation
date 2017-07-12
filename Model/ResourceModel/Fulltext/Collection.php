@@ -1,5 +1,6 @@
 <?php
 namespace Niks\LayeredNavigation\Model\ResourceModel\Fulltext;
+use Magento\Framework\App\ObjectManager;
 
 /**
  * Fulltext Collection
@@ -35,5 +36,14 @@ class Collection extends \Magento\CatalogSearch\Model\ResourceModel\Fulltext\Col
     public function getAddedFilters()
     {
         return $this->_addedFilters;
+    }
+
+    public function updateSearchCriteriaBuilder()
+    {
+        $searchCriteriaBuilder = ObjectManager::getInstance()
+            ->create(\Magento\Framework\Api\Search\SearchCriteriaBuilder::class);
+        $this->setSearchCriteriaBuilder($searchCriteriaBuilder);
+        return $this;
+
     }
 }

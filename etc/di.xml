@@ -10,13 +10,16 @@
             </argument>
         </arguments>
     </virtualType>
-    <!--<virtualType name="searchFilterList" type="Magento\Catalog\Model\Layer\FilterList">-->
-        <!--<arguments>-->
-            <!--<argument name="filters" xsi:type="array">-->
-                <!--<item name="attribute" xsi:type="string">Niks\LayeredNavigation\Model\Layer\Filter\Attribute</item>-->
-            <!--</argument>-->
-        <!--</arguments>-->
-    <!--</virtualType>-->
+    <virtualType name="searchFilterList" type="Magento\Catalog\Model\Layer\FilterList">
+        <arguments>
+            <argument name="filters" xsi:type="array">
+                <item name="attribute" xsi:type="string">Niks\LayeredNavigation\Model\Layer\Filter\Attribute</item>
+                <item name="price" xsi:type="string">Niks\LayeredNavigation\Model\Layer\Filter\Price</item>
+                <item name="decimal" xsi:type="string">Niks\LayeredNavigation\Model\Layer\Filter\Decimal</item>
+                <item name="category" xsi:type="string">Niks\LayeredNavigation\Model\Layer\Filter\Category</item>
+            </argument>
+        </arguments>
+    </virtualType>
     <type name="Magento\Catalog\Model\Layer\Filter\ItemFactory">
         <arguments>
             <argument name="instanceName" xsi:type="string">Niks\LayeredNavigation\Model\Layer\Filter\Item</argument>
@@ -26,6 +29,7 @@
         <arguments>
             <argument name="layersPool" xsi:type="array">
                 <item name="category" xsi:type="string">Niks\LayeredNavigation\Model\Layer\Category</item>
+                <item name="search" xsi:type="string">Niks\LayeredNavigation\Model\Layer\Search</item>
             </argument>
         </arguments>
     </type>
@@ -35,6 +39,11 @@
     <virtualType name="Niks\LayeredNavigation\Model\ResourceModel\Fulltext\CollectionFactory" type="Magento\Catalog\Model\ResourceModel\Product\CollectionFactory">
         <arguments>
             <argument name="instanceName" xsi:type="string">Niks\LayeredNavigation\Model\ResourceModel\Fulltext\Collection</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\CatalogSearch\Model\ResourceModel\Fulltext\SearchCollection" type="Niks\LayeredNavigation\Model\ResourceModel\Fulltext\Collection">
+        <arguments>
+            <argument name="searchRequestName" xsi:type="string">quick_search_container</argument>
         </arguments>
     </virtualType>
     <type name="Magento\CatalogSearch\Model\Layer\Category\ItemCollectionProvider">

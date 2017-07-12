@@ -144,7 +144,8 @@ class Attribute extends CoreAttribute
 
         /** @var \Niks\LayeredNavigation\Model\ResourceModel\Fulltext\Collection $collection */
         $collection = $this->getLayer()->getCollectionProvider()->getCollection($this->getLayer()->getCurrentCategory());
-
+        $collection->updateSearchCriteriaBuilder();
+        $this->getLayer()->prepareProductCollection($collection);
         foreach ($productCollection->getAddedFilters() as $field => $condition) {
             if ($this->getAttributeModel()->getAttributeCode() == $field) {
                 continue;
@@ -153,6 +154,7 @@ class Attribute extends CoreAttribute
         }
 
         $attribute = $this->getAttributeModel();
+
         $optionsFacetedData = $collection->getFacetedData($attribute->getAttributeCode());
 
         if ($attribute->getFrontendInput() == 'multiselect') {
