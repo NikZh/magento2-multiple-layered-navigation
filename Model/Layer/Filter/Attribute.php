@@ -90,7 +90,7 @@ class Attribute extends CoreAttribute
     {
         $paramValue = $this->_getRequest()->getParam($this->_requestVar);
         if (!$paramValue) {
-            return array();
+            return [];
         }
         $requestValue = $this->_getRequest()->getParam($this->_requestVar);
         return explode('_', $requestValue);

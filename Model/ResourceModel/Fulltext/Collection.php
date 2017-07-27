@@ -29,6 +29,18 @@ class Collection extends \Magento\CatalogSearch\Model\ResourceModel\Fulltext\Col
     }
 
     /**
+     * Filter Product by Categories
+     *
+     * @param array $categoriesFilter
+     * @return $this
+     */
+    public function addCategoriesFilter(array $categoriesFilter)
+    {
+        $this->addFieldToFilter('category_ids', $categoriesFilter);
+        return $this;
+    }
+
+    /**
      * Get applied filters
      *
      * @return array

@@ -51,4 +51,16 @@
             <argument name="collectionFactory" xsi:type="object">Niks\LayeredNavigation\Model\ResourceModel\Fulltext\CollectionFactory</argument>
         </arguments>
     </type>
+
+    <type name="Magento\CatalogSearch\Model\Adapter\Mysql\Filter\Preprocessor">
+        <plugin name="multiple_category_ids" type="Niks\LayeredNavigation\Plugin\Preprocessor" sortOrder="1" />
+    </type>
+
+    <type name="Magento\CatalogSearch\Model\Adapter\Aggregation\RequestCheckerComposite">
+        <arguments>
+            <argument name="queryCheckers" xsi:type="array">
+                <item name="catalog_view_container" xsi:type="object">\Niks\LayeredNavigation\Model\Adapter\Aggregation\Checker\Query\CatalogView</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

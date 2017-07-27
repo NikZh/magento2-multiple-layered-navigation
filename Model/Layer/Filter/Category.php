@@ -1,12 +1,18 @@
 <?php
 namespace Niks\LayeredNavigation\Model\Layer\Filter;
 use Magento\CatalogSearch\Model\Layer\Filter\Category as CoreCategory;
+use Magento\Framework\App\ObjectManager;
 
 /**
  * Layer attribute filter
  */
 class Category extends CoreCategory
 {
+    /**
+     * @var \Magento\Framework\Escaper
+     */
+    private $escaper;
+
     /**
      * @var \Magento\Framework\App\RequestInterface
      */
@@ -45,6 +51,7 @@ class Category extends CoreCategory
             $categoryDataProviderFactory,
             $data
         );
+        $this->escaper = $escaper;
         $this->dataProvider = $categoryDataProviderFactory->create(['layer' => $this->getLayer()]);
     }
 
@@ -65,24 +72,120 @@ class Category extends CoreCategory
     public function apply(\Magento\Framework\App\RequestInterface $request)
     {
         $this->_request = $request;
-        return parent::apply($request);
+        if (empty($request->getParam($this->_requestVar))) {
+            return $this;
+        }
+
+        /** @var \Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection $productCollection */
+        $productCollection = $this->getLayer()
+            ->getProductCollection();
+        $this->applyToCollection($productCollection);
+
+        $values = $this->getValueAsArray();
+
+        /** @var \Magento\Catalog\Model\ResourceModel\Category\Collection $categoryCollection */
+        $categoryCollection = ObjectManager::getInstance()
+            ->create(\Magento\Catalog\Model\ResourceModel\Category\Collection::class);
+        $categoryCollection->addAttributeToFilter('entity_id', ['in' => $values])->addAttributeToSelect('name');
+        $categoryItems = $categoryCollection->getItems();
+
+        foreach ($values as $value) {
+            if (isset($categoryItems[$value])) {
+                $category = $categoryItems[$value];
+                $label = $category->getName();
+                $this->getLayer()
+                    ->getState()
+                    ->addFilter($this->_createItem($label, $value));
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * Get data array for building category filter items
+     *
+     * @return array
+     */
+    protected function _getItemsData()
+    {
+        /** @var \Niks\LayeredNavigation\Model\ResourceModel\Fulltext\Collection $productCollection */
+        $productCollection = $this->getLayer()->getProductCollection();
+
+        /** @var \Niks\LayeredNavigation\Model\ResourceModel\Fulltext\Collection $collection */
+        $collection = $this->getLayer()->getCollectionProvider()->getCollection($this->getLayer()->getCurrentCategory());
+        $collection->updateSearchCriteriaBuilder();
+        $this->getLayer()->prepareProductCollection($collection);
+        foreach ($productCollection->getAddedFilters() as $field => $condition) {
+            if ($field === 'category_ids') {
+                $collection->addFieldToFilter($field, $this->getLayer()->getCurrentCategory()->getId());
+                continue;
+            }
+            $collection->addFieldToFilter($field, $condition);
+        }
+
+        $optionsFacetedData = $collection->getFacetedData('category');
+        $category = $this->dataProvider->getCategory();
+        $categories = $category->getChildrenCategories();
+        $usedOptions = $this->getValueAsArray();
+        if ($category->getIsActive()) {
+            foreach ($categories as $category) {
+                if ($category->getIsActive()
+                    && isset($optionsFacetedData[$category->getId()])
+                    && !in_array($category->getId(), $usedOptions)
+                ) {
+                    $this->itemDataBuilder->addItemData(
+                        $this->escaper->escapeHtml($category->getName()),
+                        $category->getId(),
+                        isset($optionsFacetedData[$category->getId()]['count']) ? '+' . $optionsFacetedData[$category->getId()]['count'] : 0
+                    );
+                }
+            }
+        }
+        return $this->itemDataBuilder->build();
     }
 
     /**
      * Apply current filter to collection
      *
+     * @param \Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection $collection
      * @return $this
      */
     public function applyToCollection($collection)
     {
-        $request = $this->_getRequest();
-        $categoryId = $request->getParam($this->_requestVar) ?: $request->getParam('id');
-        if (empty($categoryId)) {
+        $values = $this->getValueAsArray();
+        if (empty($values)) {
             return $this;
         }
-        $this->dataProvider->setCategoryId($categoryId);
-        $category = $this->dataProvider->getCategory();
-        $collection->addCategoryFilter($category);
+        $collection->addCategoriesFilter(['in' => $values]);
         return $this;
+    }
+
+    /**
+     * Get filter values
+     *
+     * @return array
+     */
+    public function getValueAsArray()
+    {
+        $paramValue = $this->_getRequest()->getParam($this->_requestVar);
+        if (!$paramValue) {
+            return [];
+        }
+        $requestValue = $this->_getRequest()->getParam($this->_requestVar);
+        return array_filter(explode('_', $requestValue), function ($value) {return (string)(int)$value === $value;});
+    }
+
+    /**
+     * Get filter value for reset current filter state
+     *
+     * @param string $value
+     * @return string
+     */
+    public function getResetOptionValue($value)
+    {
+        $attributeValues = $this->getValueAsArray();
+        $key = array_search($value, $attributeValues);
+        unset($attributeValues[$key]);
+        return implode('_', $attributeValues);
     }
 }
