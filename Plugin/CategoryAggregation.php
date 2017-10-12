@@ -1,7 +1,7 @@
 <?php
-namespace Niks\LayeredNavigation\Model\Adapter\Aggregation\Checker\Query;
+namespace Niks\LayeredNavigation\Plugin;
 
-use Magento\CatalogSearch\Model\Adapter\Aggregation\Checker\Query\CatalogView as CoreCatalogView;
+
 use Magento\Framework\Search\RequestInterface;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -9,13 +9,8 @@ use Magento\Framework\Search\Request\QueryInterface;
 use Magento\Framework\Search\Request\Query\BoolExpression;
 use Magento\Framework\Exception\NoSuchEntityException;
 
-class CatalogView extends CoreCatalogView
+class CategoryAggregation
 {
-    /**
-     * Identifier for query name
-     */
-    private $name;
-
     /**
      * @var CategoryRepositoryInterface
      */
@@ -29,29 +24,26 @@ class CatalogView extends CoreCatalogView
     /**
      * @param CategoryRepositoryInterface $categoryRepository
      * @param StoreManagerInterface $storeManager
-     * @param string $name
      */
     public function __construct(
         CategoryRepositoryInterface $categoryRepository,
-        StoreManagerInterface $storeManager,
-        $name
+        StoreManagerInterface $storeManager
     ) {
         $this->categoryRepository = $categoryRepository;
         $this->storeManager = $storeManager;
-        $this->name = $name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isApplicable(RequestInterface $request)
+    public function aroundIsApplicable(
+        \Magento\CatalogSearch\Model\Adapter\Aggregation\Checker\Query\CatalogView $subject,
+        \Closure $proceed,
+        RequestInterface $request
+    )
     {
-        $result = true;
-        if ($request->getName() === $this->name) {
-            $result = $this->hasAnchorCategory($request);
+        if ($request->getName() === 'catalog_view_container') {
+            return $this->hasAnchorCategory($request);
         }
 
-        return $result;
+        return $proceed($request);
     }
 
     /**
