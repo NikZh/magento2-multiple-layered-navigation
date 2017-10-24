@@ -24,6 +24,11 @@ class Category extends CoreCategory
     private $dataProvider;
 
     /**
+     * @var \Magento\CatalogSearch\Model\Layer\Category\ItemCollectionProvider
+     */
+    protected $collectionProvider;
+
+    /**
      * @param \Magento\Catalog\Model\Layer\Filter\ItemFactory $filterItemFactory
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Magento\Catalog\Model\Layer $layer
@@ -40,7 +45,9 @@ class Category extends CoreCategory
         \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder $itemDataBuilder,
         \Magento\Framework\Escaper $escaper,
         \Magento\Catalog\Model\Layer\Filter\DataProvider\CategoryFactory $categoryDataProviderFactory,
+        \Magento\CatalogSearch\Model\Layer\Category\ItemCollectionProvider $collectionProvider,
         array $data = []
+
     ) {
         parent::__construct(
             $filterItemFactory,
@@ -53,6 +60,7 @@ class Category extends CoreCategory
         );
         $this->escaper = $escaper;
         $this->dataProvider = $categoryDataProviderFactory->create(['layer' => $this->getLayer()]);
+        $this->collectionProvider = $collectionProvider;
     }
 
     /**
@@ -112,7 +120,7 @@ class Category extends CoreCategory
         $productCollection = $this->getLayer()->getProductCollection();
 
         /** @var \Niks\LayeredNavigation\Model\ResourceModel\Fulltext\Collection $collection */
-        $collection = $this->getLayer()->getCollectionProvider()->getCollection($this->getLayer()->getCurrentCategory());
+        $collection = $this->collectionProvider->getCollection($this->getLayer()->getCurrentCategory());
         $collection->updateSearchCriteriaBuilder();
         $this->getLayer()->prepareProductCollection($collection);
         foreach ($productCollection->getAddedFilters() as $field => $condition) {

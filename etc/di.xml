@@ -25,16 +25,15 @@
             <argument name="instanceName" xsi:type="string">Niks\LayeredNavigation\Model\Layer\Filter\Item</argument>
         </arguments>
     </type>
-    <type name="Magento\Catalog\Model\Layer\Resolver">
+    <type name="Magento\Framework\Search\Dynamic\Algorithm\Improved">
         <arguments>
-            <argument name="layersPool" xsi:type="array">
-                <item name="category" xsi:type="string">Niks\LayeredNavigation\Model\Layer\Category</item>
-                <item name="search" xsi:type="string">Niks\LayeredNavigation\Model\Layer\Search</item>
-            </argument>
+            <argument name="algorithm" xsi:type="object">Niks\LayeredNavigation\Model\Search\Dynamic\Algorithm</argument>
         </arguments>
     </type>
-    <type name="Magento\LayeredNavigation\Block\Navigation\FilterRenderer">
-        <plugin name="swatches_layered_renderer" type="Niks\LayeredNavigation\Plugin\FilterRenderer" sortOrder="1" />
+    <type name="Magento\CatalogSearch\Model\Layer\Category\ItemCollectionProvider">
+        <arguments>
+            <argument name="collectionFactory" xsi:type="object">Niks\LayeredNavigation\Model\ResourceModel\Fulltext\CollectionFactory</argument>
+        </arguments>
     </type>
     <virtualType name="Niks\LayeredNavigation\Model\ResourceModel\Fulltext\CollectionFactory" type="Magento\Catalog\Model\ResourceModel\Product\CollectionFactory">
         <arguments>
@@ -46,16 +45,12 @@
             <argument name="searchRequestName" xsi:type="string">quick_search_container</argument>
         </arguments>
     </virtualType>
-    <type name="Magento\CatalogSearch\Model\Layer\Category\ItemCollectionProvider">
-        <arguments>
-            <argument name="collectionFactory" xsi:type="object">Niks\LayeredNavigation\Model\ResourceModel\Fulltext\CollectionFactory</argument>
-        </arguments>
+    <type name="Magento\LayeredNavigation\Block\Navigation\FilterRenderer">
+        <plugin name="swatches_layered_renderer" type="Niks\LayeredNavigation\Plugin\FilterRenderer" sortOrder="1" />
     </type>
-
     <type name="Magento\CatalogSearch\Model\Adapter\Mysql\Filter\Preprocessor">
         <plugin name="multiple_category_ids" type="Niks\LayeredNavigation\Plugin\Preprocessor" sortOrder="1" />
     </type>
-
     <type name="Magento\CatalogSearch\Model\Adapter\Aggregation\Checker\Query\CatalogView">
         <plugin name="category_aggregation" type="Niks\LayeredNavigation\Plugin\CategoryAggregation" sortOrder="1" />
     </type>

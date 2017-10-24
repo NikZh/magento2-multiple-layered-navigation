@@ -18,6 +18,11 @@ class Attribute extends CoreAttribute
     private $tagFilter;
 
     /**
+     * @var \Magento\CatalogSearch\Model\Layer\Category\ItemCollectionProvider
+     */
+    protected $collectionProvider;
+
+    /**
      * @param \Magento\Catalog\Model\Layer\Filter\ItemFactory $filterItemFactory
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Magento\Catalog\Model\Layer $layer
@@ -31,6 +36,7 @@ class Attribute extends CoreAttribute
         \Magento\Catalog\Model\Layer $layer,
         \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder $itemDataBuilder,
         \Magento\Framework\Filter\StripTags $tagFilter,
+        \Magento\CatalogSearch\Model\Layer\Category\ItemCollectionProvider $collectionProvider,
         array $data = []
     ) {
         parent::__construct(
@@ -42,6 +48,7 @@ class Attribute extends CoreAttribute
             $data
         );
         $this->tagFilter = $tagFilter;
+        $this->collectionProvider = $collectionProvider;
     }
 
     /**
@@ -143,7 +150,7 @@ class Attribute extends CoreAttribute
             ->getProductCollection();
 
         /** @var \Niks\LayeredNavigation\Model\ResourceModel\Fulltext\Collection $collection */
-        $collection = $this->getLayer()->getCollectionProvider()->getCollection($this->getLayer()->getCurrentCategory());
+        $collection = $this->collectionProvider->getCollection($this->getLayer()->getCurrentCategory());
         $collection->updateSearchCriteriaBuilder();
         $this->getLayer()->prepareProductCollection($collection);
         foreach ($productCollection->getAddedFilters() as $field => $condition) {
