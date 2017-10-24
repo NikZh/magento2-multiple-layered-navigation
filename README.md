@@ -2,6 +2,12 @@
 
 This extension gives you an ability to choose a few options of one filterable attribute
 
+New beta features in 0.1.0 release (disabled in admin panel by default):
+
+- Ajax page update
+- Seo friendly URLs
+- Price slider
+
 ## Installation:
 
 First add repository to composer configuration:
