@@ -1,0 +1,21 @@
+<?php /** @var \Niks\LayeredNavigation\Block\LayeredNavigation\SliderRenderer $block */ ?>
+<div class="range-attribute-filter clearfix">
+    <div id="slider-<?= $block->getFilter()->getRequestVar() ?>-range"></div>
+    <div class="<?= $block->getFilter()->getRequestVar() ?>-range range">
+        <div class="">
+            <input id="<?= $block->getFilter()->getRequestVar() ?>-from" name="<?= $block->getFilter()->getRequestVar() ?>-from"> -
+            <input id="<?= $block->getFilter()->getRequestVar() ?>-to" name="<?= $block->getFilter()->getRequestVar() ?>-to"> <?= $block->getCurrencySymbol() ?>
+        </div>
+    </div>
+</div>
+
+<script type="text/x-magento-init">
+{ "*": { "niksSlider": {
+    "urlTemplate": "<?= $block->getPriceRangeUrlTemplate(); ?>",
+    "code": "<?= $block->getFilter()->getRequestVar() ?>",
+    "min": <?= (float)$block->getFilter()->getMin(); ?>,
+    "max": <?= (float)$block->getFilter()->getMax(); ?>,
+    "from": <?= (float)$block->getFrom(); ?>,
+    "to": <?= (float)$block->getTo(); ?>
+} } }
+</script>

@@ -7,40 +7,54 @@ use Magento\CatalogSearch\Model\Layer\Filter\Decimal as CoreDecimal;
  */
 class Decimal extends CoreDecimal
 {
-    /**
-     * @var \Magento\Framework\App\RequestInterface
-     */
-    protected $_request;
+    use SliderTrait;
 
     /**
-     * @return \Magento\Framework\App\RequestInterface
+     * @var \\Niks\LayeredNavigation\Model\Url\Builder
      */
-    protected function _getRequest()
-    {
-        return $this->_request;
-    }
+    protected $urlBuilder;
 
     /**
-     * Apply category filter to product collection
-     *
-     * @param   \Magento\Framework\App\RequestInterface $request
-     * @return  $this
+     * @var \Magento\CatalogSearch\Model\Layer\Category\ItemCollectionProvider
      */
-    public function apply(\Magento\Framework\App\RequestInterface $request)
+    protected $collectionProvider;
+
+    public function __construct(
+        \Magento\Catalog\Model\Layer\Filter\ItemFactory $filterItemFactory,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Magento\Catalog\Model\Layer $layer,
+        \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder $itemDataBuilder,
+        \Magento\Catalog\Model\ResourceModel\Layer\Filter\DecimalFactory $filterDecimalFactory,
+        \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency,
+        \Niks\LayeredNavigation\Model\Url\Builder $urlBuilder,
+        \Magento\CatalogSearch\Model\Layer\Category\ItemCollectionProvider $collectionProvider,
+        array $data = [])
     {
-        $this->_request = $request;
-        return parent::apply($request);
+        parent::__construct(
+            $filterItemFactory,
+            $storeManager,
+            $layer,
+            $itemDataBuilder,
+            $filterDecimalFactory,
+            $priceCurrency,
+            $data
+        );
+        $this->urlBuilder = $urlBuilder;
+        $this->collectionProvider = $collectionProvider;
     }
     
     /**
      * Apply current filter to collection
      *
-     * @return Attribute
+     * @return Decimal
      */
-    public function applyToCollection($collection)
+    public function applyToCollection($collection, $addFilter = false)
     {
-        $request = $this->_getRequest();
-        $filter = $request->getParam($this->getRequestVar());
+        $values = $this->urlBuilder->getValuesFromUrl($this->_requestVar);
+        $filter = false;
+        if ($values) {
+            $filter = $values[0];
+        }
         if (!$filter || is_array($filter)) {
             return $this;
         }
@@ -48,10 +62,36 @@ class Decimal extends CoreDecimal
         list($from, $to) = explode('-', $filter);
 
         $collection->addFieldToFilter(
-                $this->getAttributeModel()->getAttributeCode(),
-                ['from' => $from, 'to' => $to]
+            $this->getAttributeModel()->getAttributeCode(),
+            ['from' => $from, 'to' => $to]
+        );
+
+        if ($addFilter) {
+            $this->getLayer()->getState()->addFilter(
+                $this->_createItem($this->renderRangeLabel(empty($from) ? 0 : $from, $to), $filter)
             );
-        
+        }
         return $this;
+    }
+
+    public function getCurrentValue()
+    {
+        $values = $this->urlBuilder->getValuesFromUrl($this->_requestVar);
+        $filter = false;
+        if ($values) {
+            $filter = $values[0];
+        }
+        $filterParams = explode('-', $filter);
+        return $filterParams;
+    }
+
+    public function getMin()
+    {
+        return $this->getCollectionWithoutFilter()->getMin($this->_requestVar);
+    }
+
+    public function getMax()
+    {
+        return $this->getCollectionWithoutFilter()->getMax($this->_requestVar);
     }
 }

@@ -17,10 +17,10 @@ class RenderLayered extends CoreRender
      */
     public function buildUrl($attributeCode, $optionId)
     {
-        $value = $this->filter->getValueAsArray();
-        $value[] = $optionId;
-        $value = implode('_', $value);
-        $query = [$attributeCode => $value];
-        return $this->_urlBuilder->getUrl('*/*/*', ['_current' => true, '_use_rewrite' => true, '_query' => $query]);
+        return $this->_urlBuilder->getFilterUrl(
+            $this->filter->getRequestVar(),
+            $optionId,
+            []
+        );
     }
 }

@@ -14,14 +14,14 @@ class Category extends CoreCategory
     private $escaper;
 
     /**
-     * @var \Magento\Framework\App\RequestInterface
-     */
-    protected $_request;
-
-    /**
      * @var CategoryDataProvider
      */
     private $dataProvider;
+
+    /**
+     * @var \\Niks\LayeredNavigation\Model\Url\Builder
+     */
+    protected $urlBuilder;
 
     /**
      * @var \Magento\CatalogSearch\Model\Layer\Category\ItemCollectionProvider
@@ -45,10 +45,11 @@ class Category extends CoreCategory
         \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder $itemDataBuilder,
         \Magento\Framework\Escaper $escaper,
         \Magento\Catalog\Model\Layer\Filter\DataProvider\CategoryFactory $categoryDataProviderFactory,
+        \Niks\LayeredNavigation\Model\Url\Builder $urlBuilder,
         \Magento\CatalogSearch\Model\Layer\Category\ItemCollectionProvider $collectionProvider,
         array $data = []
-
-    ) {
+    )
+    {
         parent::__construct(
             $filterItemFactory,
             $storeManager,
@@ -60,15 +61,8 @@ class Category extends CoreCategory
         );
         $this->escaper = $escaper;
         $this->dataProvider = $categoryDataProviderFactory->create(['layer' => $this->getLayer()]);
+        $this->urlBuilder = $urlBuilder;
         $this->collectionProvider = $collectionProvider;
-    }
-
-    /**
-     * @return \Magento\Framework\App\RequestInterface
-     */
-    protected function _getRequest()
-    {
-        return $this->_request;
     }
 
     /**
@@ -79,8 +73,8 @@ class Category extends CoreCategory
      */
     public function apply(\Magento\Framework\App\RequestInterface $request)
     {
-        $this->_request = $request;
-        if (empty($request->getParam($this->_requestVar))) {
+        $values = $this->urlBuilder->getValuesFromUrl($this->_requestVar);
+        if (!$values) {
             return $this;
         }
 
@@ -88,8 +82,6 @@ class Category extends CoreCategory
         $productCollection = $this->getLayer()
             ->getProductCollection();
         $this->applyToCollection($productCollection);
-
-        $values = $this->getValueAsArray();
 
         /** @var \Magento\Catalog\Model\ResourceModel\Category\Collection $categoryCollection */
         $categoryCollection = ObjectManager::getInstance()
@@ -116,6 +108,11 @@ class Category extends CoreCategory
      */
     protected function _getItemsData()
     {
+        $values = $this->urlBuilder->getValuesFromUrl($this->_requestVar);
+        if (!$values) {
+            return parent::_getItemsData();
+        }
+
         /** @var \Niks\LayeredNavigation\Model\ResourceModel\Fulltext\Collection $productCollection */
         $productCollection = $this->getLayer()->getProductCollection();
 
@@ -134,12 +131,12 @@ class Category extends CoreCategory
         $optionsFacetedData = $collection->getFacetedData('category');
         $category = $this->dataProvider->getCategory();
         $categories = $category->getChildrenCategories();
-        $usedOptions = $this->getValueAsArray();
+
         if ($category->getIsActive()) {
             foreach ($categories as $category) {
                 if ($category->getIsActive()
                     && isset($optionsFacetedData[$category->getId()])
-                    && !in_array($category->getId(), $usedOptions)
+                    && !in_array($category->getId(), $values)
                 ) {
                     $this->itemDataBuilder->addItemData(
                         $this->escaper->escapeHtml($category->getName()),
@@ -160,40 +157,11 @@ class Category extends CoreCategory
      */
     public function applyToCollection($collection)
     {
-        $values = $this->getValueAsArray();
+        $values = $this->urlBuilder->getValuesFromUrl($this->_requestVar);
         if (empty($values)) {
             return $this;
         }
         $collection->addCategoriesFilter(['in' => $values]);
         return $this;
-    }
-
-    /**
-     * Get filter values
-     *
-     * @return array
-     */
-    public function getValueAsArray()
-    {
-        $paramValue = $this->_getRequest()->getParam($this->_requestVar);
-        if (!$paramValue) {
-            return [];
-        }
-        $requestValue = $this->_getRequest()->getParam($this->_requestVar);
-        return array_filter(explode('_', $requestValue), function ($value) {return (string)(int)$value === $value;});
-    }
-
-    /**
-     * Get filter value for reset current filter state
-     *
-     * @param string $value
-     * @return string
-     */
-    public function getResetOptionValue($value)
-    {
-        $attributeValues = $this->getValueAsArray();
-        $key = array_search($value, $attributeValues);
-        unset($attributeValues[$key]);
-        return implode('_', $attributeValues);
     }
 }

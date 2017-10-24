@@ -1,0 +1,61 @@
+.range-attribute-filter .ui-slider-handle {
+    height: 10px;
+    width: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background: #003eff;
+    display: block;
+    padding: 0px;
+    margin-left: 0px;
+}
+
+.range-attribute-filter .ui-slider-handle:nth-of-type(2) {
+    margin-left: -10px;
+}
+
+.range-attribute-filter .ui-state-active,
+.range-attribute-filter .ui-widget-content .ui-state-active,
+.range-attribute-filter .ui-widget-header .ui-state-active,
+.range-attribute-filter a.ui-button:active,
+.range-attribute-filter .ui-button:active,
+.range-attribute-filter .ui-button.ui-state-active:hover {
+    background: #114ec3;
+    color: #114ec3;
+}
+
+.range-attribute-filter .ui-icon-background,
+.range-attribute-filter .ui-state-active .ui-icon-background {
+    border: #114ec3;
+    background-color: #114ec3;
+}
+
+.range-attribute-filter .ui-state-active a,
+.range-attribute-filter .ui-state-active a:link,
+.range-attribute-filter .ui-state-active a:visited {
+    color: #114ec3;
+    text-decoration: none;
+}
+
+.range-attribute-filter .ui-state-hover,
+.range-attribute-filter .ui-widget-content .ui-state-hover,
+.range-attribute-filter .ui-widget-header .ui-state-hover,
+.range-attribute-filter .ui-button:hover {
+
+    background: #114ec3;
+    font-weight: normal;
+    color: #114ec3;
+}
+.range-attribute-filter .range {
+    padding-top:10px;
+    text-align: center;
+}
+.range-attribute-filter .range input {
+    max-width: 35px;
+    border-radius: 5px;
+}
+
+.range-attribute-filter .range .range-wrapper{
+    padding-left: 10px;
+    float: left;
+    max-width: 45%;
+}
