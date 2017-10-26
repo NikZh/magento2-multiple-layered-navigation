@@ -20,6 +20,16 @@
             </argument>
         </arguments>
     </virtualType>
+    <virtualType name="Magento\CatalogSearch\Model\Layer\Search\Context" type="Magento\Catalog\Model\Layer\Search\Context">
+        <arguments>
+            <argument name="collectionProvider" xsi:type="object">Niks\LayeredNavigation\Model\Layer\ItemCollectionProvider</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\CatalogSearch\Model\Layer\Category\Context" type="Magento\Catalog\Model\Layer\Category\Context">
+        <arguments>
+            <argument name="collectionProvider" xsi:type="object">Niks\LayeredNavigation\Model\Layer\ItemCollectionProvider</argument>
+        </arguments>
+    </virtualType>
     <virtualType name="categoryViewContext" type="Magento\Framework\View\Element\Template\Context">
         <arguments>
             <argument name="urlBuilder" xsi:type="object">Niks\LayeredNavigation\Model\Url\Builder</argument>
@@ -62,23 +72,6 @@
             <argument name="instanceName" xsi:type="string">Niks\LayeredNavigation\Model\Layer\Filter\Item</argument>
         </arguments>
     </type>
-
-    <virtualType name="Niks\LayeredNavigation\Model\ResourceModel\Fulltext\CollectionFactory" type="Magento\Catalog\Model\ResourceModel\Product\CollectionFactory">
-        <arguments>
-            <argument name="instanceName" xsi:type="string">Niks\LayeredNavigation\Model\ResourceModel\Fulltext\Collection</argument>
-        </arguments>
-    </virtualType>
-    <virtualType name="Magento\CatalogSearch\Model\ResourceModel\Fulltext\SearchCollection" type="Niks\LayeredNavigation\Model\ResourceModel\Fulltext\Collection">
-        <arguments>
-            <argument name="searchRequestName" xsi:type="string">quick_search_container</argument>
-        </arguments>
-    </virtualType>
-    <type name="Magento\CatalogSearch\Model\Layer\Category\ItemCollectionProvider">
-        <arguments>
-            <argument name="collectionFactory" xsi:type="object">Niks\LayeredNavigation\Model\ResourceModel\Fulltext\CollectionFactory</argument>
-        </arguments>
-    </type>
-
     <type name="Magento\CatalogSearch\Model\Adapter\Mysql\Filter\Preprocessor">
         <plugin name="multiple_category_ids" type="Niks\LayeredNavigation\Plugin\Preprocessor" sortOrder="1" />
     </type>
@@ -86,8 +79,10 @@
     <type name="Magento\Catalog\Controller\Category\View">
         <plugin name="ajax_layered_navigation" type="Niks\LayeredNavigation\Plugin\CategoryView" sortOrder="1" />
     </type>
-
-    <type name="Magento\Catalog\Block\Category\View">
+    <type name="Magento\CatalogSearch\Controller\Result\Index">
+        <plugin name="ajax_layered_navigation_search" type="Niks\LayeredNavigation\Plugin\SearchView" sortOrder="1" />
+    </type>
+    <type name="Magento\Catalog\Block\Product\ListProduct">
         <plugin name="niks_navigation_wrapper" type="Niks\LayeredNavigation\Plugin\CategoryViewBlock" sortOrder="1" />
     </type>
 

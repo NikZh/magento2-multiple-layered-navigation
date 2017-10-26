@@ -37,7 +37,7 @@ class Attribute extends CoreAttribute
         \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder $itemDataBuilder,
         \Magento\Framework\Filter\StripTags $tagFilter,
         \Niks\LayeredNavigation\Model\Url\Builder $urlBuilder,
-        \Magento\CatalogSearch\Model\Layer\Category\ItemCollectionProvider $collectionProvider,
+        \Niks\LayeredNavigation\Model\Layer\ItemCollectionProvider $collectionProvider,
         array $data = []
     ) {
         parent::__construct(

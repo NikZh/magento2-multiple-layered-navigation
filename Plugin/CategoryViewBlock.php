@@ -16,9 +16,9 @@ class CategoryViewBlock
      * @param string $result
      * @return string
      */
-    public function afterToHtml(\Magento\Catalog\Block\Category\View $subject, $result)
+    public function afterToHtml(\Magento\Catalog\Block\Product\ListProduct $subject, $result)
     {
-        if ($subject->getNameInLayout() == 'category.products') {
+        if ($subject->getNameInLayout() == 'category.products.list' || $subject->getNameInLayout() == 'search_result_list') {
             $result = '<div class="' . self::PRODUCT_LIST_WRAPPER . '">' . $result . '</div>';
         }
         return $result;

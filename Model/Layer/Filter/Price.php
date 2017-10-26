@@ -51,7 +51,7 @@ class Price extends CorePrice
         \Magento\Catalog\Model\Layer\Filter\Dynamic\AlgorithmFactory $algorithmFactory,
         \Magento\Catalog\Model\Layer\Filter\DataProvider\PriceFactory $dataProviderFactory,
         \Niks\LayeredNavigation\Model\Url\Builder $urlBuilder,
-        \Magento\CatalogSearch\Model\Layer\Category\ItemCollectionProvider $collectionProvider,
+        \Niks\LayeredNavigation\Model\Layer\ItemCollectionProvider $collectionProvider,
         array $data = []
     ) {
 

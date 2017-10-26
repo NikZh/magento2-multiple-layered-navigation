@@ -46,7 +46,7 @@ class Category extends CoreCategory
         \Magento\Framework\Escaper $escaper,
         \Magento\Catalog\Model\Layer\Filter\DataProvider\CategoryFactory $categoryDataProviderFactory,
         \Niks\LayeredNavigation\Model\Url\Builder $urlBuilder,
-        \Magento\CatalogSearch\Model\Layer\Category\ItemCollectionProvider $collectionProvider,
+        \Niks\LayeredNavigation\Model\Layer\ItemCollectionProvider $collectionProvider,
         array $data = []
     )
     {

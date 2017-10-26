@@ -11,7 +11,7 @@ define([
                 slider = $('#slider-' + this.options.code + '-range'),
                 fromInput = $('#' + self.options.code + '-from'),
                 toInput = $('#' + self.options.code + '-to');
-
+            this.options.urlTemplate = decodeURI(this.options.urlTemplate);
             slider.slider({
                 range: true,
                 min: this.options.min,
