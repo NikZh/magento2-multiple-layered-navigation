@@ -92,17 +92,19 @@ class Price extends CorePrice
             return $this;
         }
 
-        $this->dataProvider->setInterval($filter);
-        $priorFilters = $this->dataProvider->getPriorFilters($filterParams);
-        if ($priorFilters) {
-            $this->dataProvider->setPriorIntervals($priorFilters);
+        if ($addFilter) {
+            $this->dataProvider->setInterval($filter);
+            $priorFilters = $this->dataProvider->getPriorFilters($filterParams);
+            if ($priorFilters) {
+                $this->dataProvider->setPriorIntervals($priorFilters);
+            }
         }
 
         list($from, $to) = $filter;
 
         $collection->addFieldToFilter(
             'price',
-            ['from' => $from, 'to' =>  empty($to) || $from == $to ? $to : $to]
+            ['from' => $from, 'to' =>  empty($to) || $from == $to ? $to : $to - self::PRICE_DELTA]
         );
 
         if ($addFilter) {
@@ -147,5 +149,33 @@ class Price extends CorePrice
     public function getMin()
     {
         return $this->getCollectionWithoutFilter()->getMinPrice();
+    }
+
+    /**
+     * @param float $from
+     * @return float
+     */
+    protected function getTo($from)
+    {
+        $to = '';
+        $interval = $this->dataProvider->getInterval();
+        if ($interval && is_numeric($interval[1]) && $interval[1] > $from) {
+            $to = $interval[1];
+        }
+        return $to;
+    }
+
+    /**
+     * @param float $from
+     * @return float
+     */
+    protected function getFrom($from)
+    {
+        $to = '';
+        $interval = $this->dataProvider->getInterval();
+        if ($interval && is_numeric($interval[0]) && $interval[0] < $from) {
+            $to = $interval[0];
+        }
+        return $to;
     }
 }

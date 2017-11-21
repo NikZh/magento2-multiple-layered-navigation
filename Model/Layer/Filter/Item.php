@@ -24,10 +24,16 @@ class Item extends \Magento\Catalog\Model\Layer\Filter\Item
      */
     public function getUrl()
     {
+        $isSingle = false;
+        $filter = $this->getFilter();
+        if ($filter->hasAttributeModel() && $filter->getAttributeModel()->getBackendType() == 'decimal') {
+            $isSingle = true;
+        }
         return $this->_url->getFilterUrl(
             $this->getFilter()->getRequestVar(),
             $this->getValue(),
-            [$this->_htmlPagerBlock->getPageVarName() => null]
+            [$this->_htmlPagerBlock->getPageVarName() => null],
+            $isSingle
         );
     }
 }
