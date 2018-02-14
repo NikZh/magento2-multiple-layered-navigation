@@ -48,6 +48,8 @@ class SliderRenderer extends Template
 
     public function getCurrencySymbol()
     {
-        return $this->_storeManager->getStore()->getCurrentCurrency()->getCurrencySymbol();
+        if ($this->getFilter()->getAttributeModel()->getFrontendInput() == \Magento\Catalog\Model\Layer\FilterList::PRICE_FILTER) {
+            return $this->_storeManager->getStore()->getCurrentCurrency()->getCurrencySymbol();
+        }
     }
 }
