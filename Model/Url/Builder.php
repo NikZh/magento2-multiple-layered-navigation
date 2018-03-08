@@ -29,7 +29,7 @@ class Builder extends \Magento\Framework\Url
             return parent::_getRoutePath($routeParams);
         }
         if (!$this->hasData('route_path')) {
-            $routePath = $this->_getRequest()->getAlias(self::REWRITE_NAVIGATION_PATH_ALIAS);
+            $routePath = $this->_getRequest()->getAlias(self::REWRITE_NAVIGATION_PATH_ALIAS)  ?? $this->_getRequest()->getAlias(self::REWRITE_REQUEST_PATH_ALIAS);
             if (!empty($routeParams['_use_rewrite']) && $routePath !== null && isset($routeParams['_navigation_filters'])) {
                 if ($routeParams['_navigation_filters']) {
                     $suffix = $this->getUrlHydrator()->getSuffix();
