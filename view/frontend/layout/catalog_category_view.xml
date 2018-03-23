@@ -13,6 +13,8 @@
         <referenceContainer name="before.body.end">
             <block class="Niks\LayeredNavigation\Block\AjaxScript" name="niks-ajax-block"
                    template="Niks_LayeredNavigation::ajax.phtml" />
+            <block class="Magento\Framework\View\Element\Template" name="niks-accordion-block"
+                   template="Niks_LayeredNavigation::accordion.phtml" ifconfig="niks_layered_navigation/general/accordion"/>
         </referenceContainer>
     </body>
 </page>

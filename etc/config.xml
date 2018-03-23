@@ -12,6 +12,7 @@
                 <ajax>0</ajax>
                 <friendly_urls>0</friendly_urls>
                 <slider>0</slider>
+                <accordion>0</accordion>
             </general>
         </niks_layered_navigation>
     </default>
