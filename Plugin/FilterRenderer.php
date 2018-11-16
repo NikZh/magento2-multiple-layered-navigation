@@ -40,7 +40,11 @@ class FilterRenderer extends CoreRenderer
             }
         }
 
-        if ($this->isSliderEnabled() && $filter->hasAttributeModel() && $filter->getAttributeModel()->getBackendType() == 'decimal') {
+        if ($this->isSliderEnabled()
+            && $filter->hasAttributeModel()
+            && $filter->getAttributeModel()->getBackendType() == 'decimal'
+            && strpos('no-slider', $filter->getAttributeModel()->getFrontendClass()) === false
+        ) {
             return $this->layout
                 ->createBlock(\Niks\LayeredNavigation\Block\LayeredNavigation\SliderRenderer::class)
                 ->setFilter($filter)

@@ -29,3 +29,11 @@ Upgrade setup:
 ```bash
 php bin/magento setup:upgrade
 ```
+
+
+## FAQ
+
+#### How can I disable the slider for decimal attributes?
+
+Currently you have to set `frontend_class` in `eav_attribute` to `no-slider` via database. 
+
