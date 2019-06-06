@@ -187,7 +187,36 @@ class Hydrator
             $currentCategory = $this->registry->registry('current_category');
             $this->_optionsByCode['cat'] = $this->getCategoryOptions($currentCategory->getId());
         }
+
+        if (!isset($this->_optionsByCode[$attribute])) {
+            $this->_optionsByCode[$attribute] = $this->checkOptionsBySourceModel($attribute);
+        }
+
+
         return isset($this->_optionsByCode[$attribute]) ? $this->_optionsByCode[$attribute] : [];
+    }
+
+    /**
+     * Check if attribute has a SourceModel
+     *
+     * @param $attributeCode
+     * @return mixed
+     */
+    protected function checkOptionsBySourceModel($attributeCode)
+    {
+
+        if (!isset($this->_optionsByCode[$attributeCode])) {
+            $this->_optionsByCode[$attributeCode] = [];
+            $attribute = $this->getAttribute($attributeCode);
+            if($attribute->getId() && $attribute->getSourceModel()) {
+                $options = $attribute->getSource()->getAllOptions();
+                foreach ($options as $optionElement) {
+                    $this->_optionsByCode[$attributeCode][$optionElement['value']] = $this->prepareOptionLabel((string) $optionElement['label']);
+                }
+            }
+        }
+
+        return $this->_optionsByCode[$attributeCode];
     }
 
     /**
