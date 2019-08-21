@@ -22,7 +22,7 @@ define([
                     toInput.val(ui.values[1]);
                 },
                 stop: function () {
-                    self.processPrice(slider);
+                    self.processPrice(slider, fromInput, toInput);
                 }
             });
 
@@ -31,19 +31,23 @@ define([
 
             fromInput.change(function () {
                 slider.slider('values', 0, $(this).val());
-                self.processPrice(slider);
+                self.processPrice(slider, fromInput, toInput);
             });
 
             toInput.change(function () {
                 slider.slider('values', 1, $(this).val());
-                self.processPrice(slider);
+                self.processPrice(slider, fromInput, toInput);
             });
         },
 
-        processPrice: function (slider) {
+        processPrice: function (slider, fromInput, toInput) {
             var from = slider.slider('values', 0),
                 to = slider.slider('values', 1),
                 url = this.options.urlTemplate.replace('{{from}}', from).replace('{{to}}', to);
+
+            fromInput.val(slider.slider('values', 0));
+            toInput.val(slider.slider('values', 1));
+
             nav().updateContent(url, true);
         }
     });
