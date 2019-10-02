@@ -114,10 +114,15 @@ class Hydrator
     public function hydrate(array $data)
     {
         $stringParts = [];
+
+        ksort($data);
+
         foreach ($data as $attributeCode => $values) {
             $attributeParts = [];
             $attribute = $this->getAttribute($attributeCode);
             $options = $this->getOptions($attributeCode);
+
+            sort($values);
 
             foreach ($values as $value) {
                 if ($attribute && $attribute->getBackendType() == 'decimal') {
